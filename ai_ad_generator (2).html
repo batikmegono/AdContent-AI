@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ad Content & Prompt Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #14b8a6 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2); 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.4); 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.6); 
+        }
+        .gradient-header {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #f97316 100%);
+        }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+        }
+        .orange-btn {
+            background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+            transition: all 0.3s ease;
+        }
+        .orange-btn:hover {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+            box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.4);
+        }
+        .loader {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-slate-900">
+
+    <!-- Header -->
+    <header class="gradient-header text-white shadow-lg z-20 relative border-b border-orange-400/30 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/25 backdrop-blur flex items-center justify-center shadow-inner">
+                    <i class="fa-solid fa-wand-magic-sparkles text-xl text-yellow-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-white drop-shadow-sm">AI Ad Content & Prompt Generator</h1>
+                    <p class="text-[11px] text-orange-100 font-medium">Studio Kreatif AI + Produk Blending Pro</p>
+                </div>
+            </div>
+            <div class="text-right hidden md:block">
+                <div class="text-xs font-semibold text-white/90">MOI Apps Studio</div>
+                <div class="text-[11px] text-orange-100">Jalan Rimat Bakti 40 Karanganyar Batang | WA: 08197653003</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container: Mobile Stack, Desktop Side-by-Side -->
+    <main class="flex-1 flex flex-col lg:flex-row max-w-screen-2xl mx-auto w-full">
+        
+        <!-- Kolom Kiri: Form Input (Orange Gradient) -->
+        <section class="w-full lg:w-[440px] sidebar-gradient border-r border-orange-200/60 overflow-y-auto custom-scrollbar flex flex-col shadow-2xl z-10 shrink-0">
+            <div class="p-4 sm:p-6 space-y-6">
+                
+                <!-- 1. Gaya Iklan -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">1. Gaya Iklan</label>
+                    <div class="relative">
+                        <select id="adStyle" class="w-full bg-white/90 border border-orange-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 block p-3 appearance-none font-medium shadow-xs">
+                            <option value="Beat Driven Ads">Beat Driven Ads (Parfum, Sneakers, Skincare, dll)</option>
+                            <option value="Storytelling Ads">Storytelling Ads (Kopi, Tas, Parfum Mewah, dll)</option>
+                            <option value="Comedy / Skit Ads">Comedy / Skit Ads (Sabun Cuci, Minuman Energi)</option>
+                            <option value="UGC Ads">UGC (User Generated Content) Ads (Lip Balm, Serum, Gadget)</option>
+                            <option value="Product Showcase Ads">Product Showcase Ads (Jam Tangan, Kosmetik)</option>
+                            <option value="Unboxing / Review Ads">Unboxing / Review Ads (Smartphone, Mainan, Skincare)</option>
+                            <option value="Before-After Ads">Before–After / Transformation Ads (Skincare, Pembersih)</option>
+                            <option value="Aesthetic Ads">Aesthetic / Moodboard Ads (Lilin, Fashion, Parfum)</option>
+                            <option value="Educational Ads">Educational / Tutorial Ads (Makeup, Detergen, Alat Dapur)</option>
+                            <option value="Testimonial Ads">Testimonial / Reaction Ads</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-orange-600">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nama Produk / Jasa -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">Nama Produk / Jasa</label>
+                    <input type="text" id="productNameInput" placeholder="Contoh: Tas Kulit Mewah / GlowUp Serum" class="w-full bg-white/90 border border-orange-200 text-slate-800 text-sm rounded-xl p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium shadow-xs">
+                </div>
+
+                <!-- 2. Unggah Foto Produk -->
+                <div class="space-y-3 p-4 bg-orange-100/60 rounded-2xl border border-orange-200 shadow-inner">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">2. Unggah Foto Produk (Wajib untuk Blending)</label>
+                    
+                    <div class="p-3 border-2 border-dashed border-orange-300 rounded-xl hover:bg-white transition cursor-pointer relative bg-white/60 shadow-xs" onclick="document.getElementById('mainProductFile').click()">
+                        <div class="text-center" id="mainProductDropzone">
+                            <i class="fa-solid fa-cloud-arrow-up text-orange-600 text-2xl mb-1"></i>
+                            <p class="text-xs font-semibold text-slate-700">Unggah Produk Utama (Wajib)</p>
+                            <p class="text-[10px] text-slate-400">PNG atau JPG resolusi tinggi</p>
+                        </div>
+                        <img id="mainProductPreview" class="hidden w-full h-32 object-contain mt-2 rounded-lg" />
+                        <input type="file" id="mainProductFile" class="hidden" accept="image/*" onchange="previewImage(this, 'mainProductPreview', 'mainProductDropzone')">
+                    </div>
+
+                    <div class="p-3 border-2 border-dashed border-orange-300/70 rounded-xl hover:bg-white transition cursor-pointer relative bg-white/60 shadow-xs" onclick="document.getElementById('supportProductFile').click()">
+                        <div class="text-center" id="supportProductDropzone">
+                            <i class="fa-solid fa-plus text-orange-500 text-xl mb-1"></i>
+                            <p class="text-xs font-medium text-slate-600">Tambah Produk Pendukung (Opsional)</p>
+                        </div>
+                        <img id="supportProductPreview" class="hidden w-full h-32 object-contain mt-2 rounded-lg" />
+                        <input type="file" id="supportProductFile" class="hidden" accept="image/*" onchange="previewImage(this, 'supportProductPreview', 'supportProductDropzone')">
+                    </div>
+                </div>
+
+                <!-- Formula Produk (UVP, USP, Buyer Persona) -->
+                <div class="space-y-3 p-4 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-inner">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bullseye text-orange-600"></i> Rumus Strategi Produk
+                    </label>
+                    
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-700 mb-1">UVP (Unique Value Proposition)</label>
+                        <input type="text" id="uvpInput" placeholder="Contoh: Elegan & tahan lama untuk wanita aktif" class="w-full bg-white border border-amber-200 text-slate-800 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-xs">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-700 mb-1">USP (Unique Selling Proposition)</label>
+                        <input type="text" id="uspInput" placeholder="Contoh: Kulit asli premium & jahitan tangan eksklusif" class="w-full bg-white border border-amber-200 text-slate-800 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-xs">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-700 mb-1">Buyer Persona (Target Konsumen)</label>
+                        <textarea id="personaInput" rows="2" placeholder="Contoh: Wanita karir 25-40 tahun, menyukai gaya profesional & berkelas" class="w-full bg-white border border-amber-200 text-slate-800 text-xs rounded-xl p-2.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none shadow-xs"></textarea>
+                    </div>
+                </div>
+
+                <!-- 3. Model Agent -->
+                <div class="space-y-2.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">3. Model Agent</label>
+                    <div class="flex bg-orange-200/70 rounded-xl p-1 shadow-inner">
+                        <button id="btnAiDesc" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-md text-orange-700 transition" onclick="toggleModelMode('ai')">Deskripsi AI</button>
+                        <button id="btnUploadModel" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition" onclick="toggleModelMode('upload')">Upload Photo</button>
+                    </div>
+
+                    <div id="modelUploadSection" class="hidden mt-2">
+                         <div class="p-3 border-2 border-dashed border-orange-300 rounded-xl text-center cursor-pointer hover:bg-white bg-white/60 shadow-xs" onclick="document.getElementById('modelFile').click()">
+                            <p class="text-xs text-slate-600"><i class="fa-regular fa-image mr-1 text-orange-600"></i> Pilih Foto Model</p>
+                            <img id="modelPreview" class="hidden w-full h-24 object-cover mt-2 rounded-lg" />
+                            <input type="file" id="modelFile" class="hidden" accept="image/*" onchange="previewImage(this, 'modelPreview', null, true)">
+                        </div>
+                    </div>
+
+                    <textarea id="modelDesc" rows="2" class="block p-3 w-full text-sm text-slate-800 bg-white/90 rounded-xl border border-orange-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mt-2 font-medium resize-none shadow-xs" placeholder="Deskripsi Model (Contoh: Wanita Asia usia 28 tahun, berwibawa, memegang tas dengan anggun...)"></textarea>
+                </div>
+
+                <!-- 4. Pilihan Rasio -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">4. Pilihan Rasio</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ratio" value="16:9" class="peer hidden" checked>
+                            <div class="text-center p-2.5 border border-orange-200 rounded-xl peer-checked:bg-orange-600 peer-checked:text-white peer-checked:border-orange-600 text-xs font-bold transition shadow-sm bg-white/80">16:9 (Landscape)</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ratio" value="9:16" class="peer hidden">
+                            <div class="text-center p-2.5 border border-orange-200 rounded-xl peer-checked:bg-orange-600 peer-checked:text-white peer-checked:border-orange-600 text-xs font-bold transition shadow-sm bg-white/80">9:16 (Portrait)</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ratio" value="1:1" class="peer hidden">
+                            <div class="text-center p-2.5 border border-orange-200 rounded-xl peer-checked:bg-orange-600 peer-checked:text-white peer-checked:border-orange-600 text-xs font-bold transition shadow-sm bg-white/80">1:1 (Square)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 5. Dialog Narasi -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">5. Dialog Narasi</label>
+                        <button type="button" onclick="generateAiDialog()" id="btnAiDialog" class="text-xs text-orange-700 hover:text-orange-900 font-bold flex items-center gap-1 bg-orange-100 px-2.5 py-1 rounded-lg border border-orange-200 transition shadow-xs hover:bg-orange-200">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Buatkan AI
+                        </button>
+                    </div>
+                    <textarea id="dialogScript" rows="3" class="block p-3 w-full text-sm text-slate-800 bg-white/90 rounded-xl border border-orange-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-medium resize-none shadow-xs" placeholder="Tuliskan skrip atau narasi iklan di sini..."></textarea>
+                </div>
+
+                <!-- 6. Karakter Suara & TTS -->
+                <div class="space-y-3 p-4 bg-orange-100/60 rounded-2xl border border-orange-200 shadow-inner">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-orange-900">6. Karakter Suara & Audio VO</label>
+                    <div class="relative">
+                        <select id="voiceChar" class="w-full bg-white border border-orange-200 text-slate-800 text-xs rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 block p-3 appearance-none font-medium shadow-xs">
+                            <optgroup label="Suara Wanita">
+                                <option value="Kore" selected>Rini (Kore) — wanita dewasa, tegas & jelas</option>
+                                <option value="Puck">Ayu (Puck) — wanita muda, ceria & ramah</option>
+                                <option value="Charon">Sari (Charon) — wanita, santai & tenang</option>
+                                <option value="Leda">Dian (Leda) — wanita, tenang & lembut</option>
+                                <option value="Autonoe">Citra (Autonoe) — wanita, ceria & bersemangat</option>
+                                <option value="Algieba">Elisa (Algieba) — wanita, halus & profesional</option>
+                                <option value="Despina">Fia (Fia) — wanita muda, jelas & bersemangat</option>
+                                <option value="Erinome">Gita (Gita) — wanita, semangat & ceria</option>
+                                <option value="Orus">Hana (Hana) — wanita dewasa, tegas & berwibawa</option>
+                                <option value="Aoede">Indah (Aoede) — wanita, ramah & hangat</option>
+                                <option value="Callirrhoe">Jeni (Callirrhoe) — wanita, lembut & keibuan</option>
+                            </optgroup>
+                            <optgroup label="Suara Pria">
+                                <option value="Fenrir">Raka (Fenrir) — pria dewasa, tegas & jelas</option>
+                                <option value="Zephyr">Arga (Zephyr) — pria muda, ceria & ramah</option>
+                                <option value="Enceladus">Damar (Enceladus) — pria, santai & tenang</option>
+                                <option value="Iapetus">Bima (Iapetus) — pria, tenang & lembut</option>
+                                <option value="Umbriel">Rizky (Umbriel) — pria, ceria & bersemangat</option>
+                                <option value="Algenib">Farhan (Algenib) — pria, halus & profesional</option>
+                                <option value="Rasalgethi">Dika (Rasalgethi) — pria muda, jelas & bersemangat</option>
+                                <option value="Laomedeia">Galang (Laomedeia) — pria, semangat & ceria</option>
+                                <option value="Alnilam">Hendra (Alnilam) — pria dewasa, tegas & berwibawa</option>
+                                <option value="Achird">Ilham (Achird) — pria, ramah & hangat</option>
+                                <option value="Zubenelgenubi">Joko (Zubenelgenubi) — pria, lembut & kebapakan</option>
+                            </optgroup>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-orange-600">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="button" onclick="generateVoiceover()" id="btnGenerateVO" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-microphone-lines text-yellow-200"></i> Generate & Download Suara (VO)
+                    </button>
+                    
+                    <div id="audioPlayerContainer" class="hidden pt-2">
+                        <audio id="voAudioPlayer" controls class="w-full h-10"></audio>
+                        <a id="downloadVoBtn" class="mt-2 block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm">
+                            <i class="fa-solid fa-download mr-1"></i> Unduh File Audio (WAV)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 7. Generate Button -->
+                <div class="pt-4 pb-4">
+                    <button id="btnGenerate" onclick="generateContent()" class="w-full text-white orange-btn focus:ring-4 focus:ring-orange-300 font-extrabold rounded-xl text-sm px-5 py-4 text-center flex items-center justify-center gap-2 transition-all shadow-xl shadow-orange-600/30 hover:-translate-y-0.5">
+                        <i class="fa-solid fa-bolt text-yellow-200"></i> 7. Generate Konten & Blending
+                    </button>
+                </div>
+
+                <!-- Studio Footer Info -->
+                <div class="pt-4 pb-8 border-t border-orange-200 text-center text-xs text-orange-900 space-y-1">
+                    <p class="font-bold">MOI Apps Studio</p>
+                    <p>Jalan Rimat Bakti 40 Karanganyar Batang</p>
+                    <p class="font-semibold"><i class="fa-brands fa-whatsapp text-orange-600 mr-1"></i> WA: 08197653003</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kolom Kanan: Output Generate (Tosca Background) -->
+        <section class="flex-1 bg-gradient-to-br from-teal-700 via-teal-800 to-teal-900 p-4 sm:p-6 md:p-8 overflow-y-auto custom-scrollbar relative min-h-[500px]">
+            
+            <div id="welcomeState" class="h-full flex flex-col items-center justify-center text-teal-200/70 py-20">
+                <div class="w-20 h-20 rounded-3xl bg-teal-600/40 backdrop-blur text-teal-200 flex items-center justify-center text-3xl mb-4 shadow-inner border border-teal-500/30">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Belum ada konten</h2>
+                <p class="text-sm mt-1 text-center max-w-sm text-teal-100/80 px-4">Isi formulir di sebelah kiri dan upload foto produk untuk memulai blending produk ke visual iklan AI.</p>
+            </div>
+
+            <div id="loadingState" class="hidden h-full flex flex-col items-center justify-center py-24">
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 rounded-full bg-teal-400 blur-xl opacity-30 animate-pulse"></div>
+                    <div class="loader relative z-10 bg-orange-600"></div>
+                </div>
+                <h2 class="text-lg font-bold text-white animate-pulse">Menyelaraskan Produk ke Model & Scene...</h2>
+                <p class="text-sm text-teal-100 mt-2 text-center max-w-md px-4">AI sedang menganalisis foto produk asli Anda untuk mempertahankan bentuk, warna, dan detail aslinya ke dalam visual iklan.</p>
+            </div>
+
+            <!-- Hasil Container -->
+            <div id="resultsContainer" class="hidden space-y-8 pb-16">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-teal-600/50 pb-4 gap-2">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">8. Hasil Tema & Blending Produk</h2>
+                        <p class="text-xs text-teal-200 mt-0.5">Kelola prompt scene 8 detik (mode gerak lincah, max 900 karakter), unduh gambar, atau buat ulang.</p>
+                    </div>
+                    <span class="text-xs bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-3 py-1.5 rounded-full font-bold shadow-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i> Blending Produk Aktif
+                    </span>
+                </div>
+                
+                <div id="themesWrapper" class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <!-- Cards will be injected here via JS -->
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        const API_KEY = "";
+        let currentThemesData = [];
+
+        function toggleModelMode(mode) {
+            const btnAi = document.getElementById('btnAiDesc');
+            const btnUpload = document.getElementById('btnUploadModel');
+            const uploadSection = document.getElementById('modelUploadSection');
+            
+            if(mode === 'ai') {
+                btnAi.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-md text-orange-700 transition";
+                btnUpload.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
+                uploadSection.classList.add('hidden');
+            } else {
+                btnUpload.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-md text-orange-700 transition";
+                btnAi.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-800 transition";
+                uploadSection.classList.remove('hidden');
+            }
+        }
+
+        function previewImage(input, previewId, dropzoneId, hideDropzoneText = false) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    
+                    if(dropzoneId) {
+                        const dropzone = document.getElementById(dropzoneId);
+                        if(hideDropzoneText) {
+                            dropzone.classList.add('hidden');
+                        } else {
+                            dropzone.classList.add('scale-75', 'opacity-50');
+                        }
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function getBase64FromFileInput(fileInputId) {
+            return new Promise((resolve) => {
+                const fileInput = document.getElementById(fileInputId);
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    resolve(null);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64String = e.target.result.split(',')[1];
+                    const mimeType = fileInput.files[0].type;
+                    resolve({ base64: base64String, mimeType: mimeType });
+                };
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(fileInput.files[0]);
+            });
+        }
+
+        // Helper functions for TTS WAV conversion
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function pcmToWav(pcm16, sampleRate) {
+            const numChannels = 1;
+            const bytesPerSample = 2;
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+            const dataSize = pcm16.length * bytesPerSample;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            function writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            let offset = 44;
+            for (let i = 0; i < pcm16.length; i++, offset += 2) {
+                view.setInt16(offset, pcm16[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        async function generateVoiceover() {
+            const script = document.getElementById('dialogScript').value.trim();
+            const voiceName = document.getElementById('voiceChar').value;
+            
+            if (!script) {
+                alert("Mohon tuliskan atau generate dialog narasi (Nomor 5) terlebih dahulu sebelum membuat suara VO!");
+                document.getElementById('dialogScript').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnGenerateVO');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Meracik Suara...';
+            btn.disabled = true;
+
+            const ttsUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${API_KEY}`;
+            const ttsPayload = {
+                contents: [{
+                    parts: [{ text: `Ucapkan dengan nada profesional dan natural untuk iklan komersial: ${script}` }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: voiceName }
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(ttsUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ttsPayload)
+                });
+
+                if (!response.ok) throw new Error("Gagal memanggil TTS API");
+                const result = await response.json();
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                    const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+                    const wavBlob = pcmToWav(pcm16, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+
+                    const playerContainer = document.getElementById('audioPlayerContainer');
+                    const player = document.getElementById('voAudioPlayer');
+                    const downloadBtn = document.getElementById('downloadVoBtn');
+
+                    player.src = audioUrl;
+                    downloadBtn.href = audioUrl;
+                    downloadBtn.download = `Voiceover_${voiceName}_${Date.now()}.wav`;
+                    playerContainer.classList.remove('hidden');
+                    player.play();
+                } else {
+                    alert("Format audio tidak ditemukan dari server.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Gagal men-generate suara. Silakan coba lagi.");
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        async function callGeminiText(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                "themeName": { "type": "STRING", "description": "Nama tema visual yang unik" },
+                                "imagePromptEN": { "type": "STRING", "description": "Prompt bahasa inggris untuk image generator (detil pencahayaan, subjek memegang/menampilkan produk persis seperti referensi)" },
+                                "scenePromptJSON_ID": { "type": "STRING", "description": "JSON string berisi instruksi scene 8 detik (gerak lincah, max 900 karakter) dalam Bahasa Indonesia" },
+                                "scenePromptJSON_EN": { "type": "STRING", "description": "JSON string berisi instruksi scene 8 detik (gerak lincah, max 900 characters) dalam Bahasa Inggris" }
+                            },
+                            "required": ["themeName", "imagePromptEN", "scenePromptJSON_ID", "scenePromptJSON_EN"]
+                        }
+                    }
+                }
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("Gagal mengambil data dari Gemini Text API");
+            
+            const data = await response.json();
+            const jsonText = data.candidates[0].content.parts[0].text;
+            return JSON.parse(jsonText);
+        }
+
+        async function generateAiDialog() {
+            const productName = document.getElementById('productNameInput').value.trim();
+            const adStyle = document.getElementById('adStyle').value;
+            const uvp = document.getElementById('uvpInput').value.trim();
+            const usp = document.getElementById('uspInput').value.trim();
+            const persona = document.getElementById('personaInput').value.trim();
+            
+            if (!productName) {
+                alert("Mohon isi 'Nama Produk / Jasa' terlebih dahulu agar AI dapat membuatkan skrip yang sesuai!");
+                document.getElementById('productNameInput').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnAiDialog');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyusun...';
+            btn.disabled = true;
+
+            const scriptPrompt = `
+                Bertindaklah sebagai copywriter iklan profesional. Buatlah draf skrip atau narasi iklan pendek (durasi 15-30 detik) yang menarik, natural, dan persuasif dalam Bahasa Indonesia.
+                
+                Data Produk:
+                - Nama Produk/Jasa: ${productName}
+                - Gaya Iklan: ${adStyle}
+                - UVP (Unique Value Proposition): ${uvp || 'Solusi cepat dan terbaik'}
+                - USP (Unique Selling Proposition): ${usp || 'Kualitas terbaik dan teruji'}
+                - Target Konsumen (Persona): ${persona || 'Khalayak umum'}
+
+                Berikan HANYA teks dialog/narasinya saja tanpa penjelasan tambahan atau tanda kutip pembuka di awal.
+            `;
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+            const payload = {
+                contents: [{ parts: [{ text: scriptPrompt }] }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("Gagal memanggil API");
+                const data = await response.json();
+                const textResult = data.candidates[0].content.parts[0].text.trim();
+                
+                document.getElementById('dialogScript').value = textResult;
+            } catch (error) {
+                console.error(error);
+                alert("Gagal membuat narasi AI. Silakan coba lagi.");
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        async function callGeminiImageWithProduct(imagePromptEN, ratio, productImgData, modelImgData, productName) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${API_KEY}`;
+            
+            const parts = [];
+            let descriptivePrompt = `Create a high-end commercial ad photograph for "${productName || 'product'}". ${imagePromptEN}. CRITICAL INSTRUCTION: The model must naturally hold, use, or display the EXACT product provided in the uploaded reference image. Keep the product's actual color, shape, materials, texture, branding, and details completely faithful to the uploaded product photo. Do not alter or substitute the product design.`;
+            
+            if (productImgData) {
+                parts.push({ text: descriptivePrompt });
+                parts.push({
+                    inlineData: {
+                        mimeType: productImgData.mimeType,
+                        data: productImgData.base64
+                    }
+                });
+            } else {
+                parts.push({ text: descriptivePrompt });
+            }
+
+            if (modelImgData) {
+                parts.push({ text: "Use this specific model reference for the person in the ad:" });
+                parts.push({
+                    inlineData: {
+                        mimeType: modelImgData.mimeType,
+                        data: modelImgData.base64
+                    }
+                });
+            }
+
+            const payload = {
+                contents: [{
+                    role: 'user',
+                    parts: parts
+                }],
+                generationConfig: {
+                    responseModalities: ['IMAGE'],
+                    imageConfig: { aspectRatio: ratio }
+                },
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error("API Limit or unavailable");
+                const result = await response.json();
+                
+                const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                if (part) {
+                    return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                }
+                
+                throw new Error("Invalid payload format");
+            } catch (e) {
+                console.warn("Using smart fallback canvas due to API restriction:", e);
+                return createFallbackAdImage(imagePromptEN, ratio, productName);
+            }
+        }
+
+        function createFallbackAdImage(promptText, ratio, productName) {
+            const canvas = document.createElement('canvas');
+            let w = 800, h = 450;
+            if(ratio === '9:16') { w = 450; h = 800; }
+            else if(ratio === '1:1') { w = 600; h = 600; }
+            
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+
+            const gradient = ctx.createLinearGradient(0, 0, w, h);
+            gradient.addColorStop(0, '#0f766e');
+            gradient.addColorStop(0.5, '#ea580c');
+            gradient.addColorStop(1, '#14b8a6');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.roundRect ? ctx.roundRect(30, 30, w - 60, h - 60, 20) : ctx.rect(30, 30, w - 60, h - 60);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(productName ? `PRODUK: ${productName.toUpperCase()}` : "BLENDING PRODUK AI", w / 2, h / 2 - 25);
+
+            ctx.font = '13px "Plus Jakarta Sans", sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText("Visual Ad Komersial Profesional", w / 2, h / 2 + 15);
+
+            return canvas.toDataURL('image/png');
+        }
+
+        async function generateContent() {
+            const adStyle = document.getElementById('adStyle').value;
+            const productName = document.getElementById('productNameInput').value.trim() || 'Produk Unggulan';
+            const modelDesc = document.getElementById('modelDesc').value;
+            const ratio = document.querySelector('input[name="ratio"]:checked').value;
+            const dialog = document.getElementById('dialogScript').value;
+            const voice = document.getElementById('voiceChar').value;
+            
+            const uvp = document.getElementById('uvpInput').value;
+            const usp = document.getElementById('uspInput').value;
+            const persona = document.getElementById('personaInput').value;
+            
+            const productImgData = await getBase64FromFileInput('mainProductFile');
+            const modelImgData = await getBase64FromFileInput('modelFile');
+
+            const sysPrompt = `
+                Kamu adalah Sutradara Iklan AI profesional. Buat 3 tema visual berbeda untuk iklan.
+                - Nama Produk/Jasa: ${productName}
+                - Gaya Iklan: ${adStyle}
+                - UVP: ${uvp || 'Solusi terbaik untuk konsumen'}
+                - USP: ${usp || 'Keunggulan produk kompetitif'}
+                - Target Konsumen: ${persona || 'Khalayak luas'}
+                - Deskripsi Model: ${modelDesc || 'Model profesional memegang produk dengan jelas'}
+                - Dialog: ${dialog || 'Narasi komersial standar'}
+                - Rasio: ${ratio}
+                - Suara: ${voice}
+
+                Tugas:
+                1. Berikan nama tema (themeName).
+                2. Buat prompt gambar deskriptif (imagePromptEN) dalam Bahasa Inggris yang menonjolkan produk "${productName}" bersama model.
+                3. Buat scene prompt untuk video berdurasi 8 detik dengan mode "gerak lincah" dalam bentuk JSON string (maksimal 900 karakter) untuk Bahasa Indonesia (scenePromptJSON_ID) dan Bahasa Inggris (scenePromptJSON_EN).
+            `;
+
+            document.getElementById('welcomeState').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('btnGenerate').disabled = true;
+            document.getElementById('btnGenerate').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Memproses Blending...';
+
+            try {
+                const themesResult = await callGeminiText(sysPrompt);
+                currentThemesData = themesResult;
+                
+                const wrapper = document.getElementById('themesWrapper');
+                wrapper.innerHTML = '';
+                
+                let imageClasses = "w-full rounded-2xl object-cover bg-teal-900 border border-teal-600 shadow-md";
+                if(ratio === '16:9') imageClasses += " aspect-video";
+                else if(ratio === '9:16') imageClasses += " aspect-[9/16] max-h-[460px] object-contain bg-black";
+                else imageClasses += " aspect-square";
+
+                const imagePromises = currentThemesData.map(async (theme, index) => {
+                    const imageUrl = await callGeminiImageWithProduct(theme.imagePromptEN, ratio, productImgData, modelImgData, productName);
+                    
+                    const card = document.createElement('div');
+                    card.className = "bg-teal-900/40 backdrop-blur-xl border border-teal-500/30 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 flex flex-col";
+                    card.innerHTML = `
+                        <div class="relative group p-4 bg-black/20">
+                            <img id="img-${index}" src="${imageUrl}" class="${imageClasses}" alt="${theme.themeName}">
+                            
+                            <div class="absolute inset-0 m-4 bg-black/60 backdrop-blur-xs flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition duration-200 rounded-2xl">
+                                <button onclick="downloadImage('img-${index}', '${theme.themeName}')" class="bg-white text-slate-800 w-11 h-11 rounded-xl flex items-center justify-center hover:bg-orange-50 shadow-lg transition transform hover:scale-105" title="Download">
+                                    <i class="fa-solid fa-download text-orange-600"></i>
+                                </button>
+                                <button onclick="regenerateImage(${index}, '${ratio}', '${productName}')" class="bg-orange-600 text-white w-11 h-11 rounded-xl flex items-center justify-center hover:bg-orange-700 shadow-lg transition transform hover:scale-105" title="Regenerate Gambar">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 flex-1 flex flex-col justify-between bg-teal-950/60">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-lg font-extrabold text-white">${theme.themeName}</h3>
+                                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-md bg-orange-500/20 text-orange-300 border border-orange-500/30">Tema ${index + 1}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-teal-200 uppercase tracking-wider">Scene Prompt (8 Detik, Lincah)</span>
+                                    <div class="flex bg-teal-900 rounded-lg p-0.5 border border-teal-700">
+                                        <button onclick="toggleLang(${index}, 'ID')" id="btn-lang-id-${index}" class="px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-white shadow-xs text-teal-900 transition">ID</button>
+                                        <button onclick="toggleLang(${index}, 'EN')" id="btn-lang-en-${index}" class="px-2.5 py-1 text-[11px] font-extrabold rounded-md text-teal-300 hover:text-white transition">EN</button>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <textarea id="prompt-area-${index}" readonly class="w-full text-xs font-mono text-teal-100 bg-teal-900/90 border border-teal-700/80 rounded-xl p-3 h-36 custom-scrollbar resize-none focus:outline-none">${formatJsonString(theme.scenePromptJSON_ID)}</textarea>
+                                    <button onclick="copyPrompt(${index})" class="absolute bottom-3 right-3 bg-teal-800 border border-teal-600 text-teal-100 hover:bg-teal-700 rounded-lg px-2.5 py-1.5 text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+                                        <i class="fa-regular fa-copy text-orange-400"></i> Copy
+                                    </button>
+                                </div>
+                                <div class="mt-3 text-[11px] text-orange-300 font-semibold flex items-center gap-1.5 bg-orange-950/40 p-2 rounded-lg border border-orange-500/20">
+                                    <i class="fa-solid fa-link text-orange-400"></i> Produk Asli Tersinkronisasi Sempurna
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    wrapper.appendChild(card);
+                });
+
+                await Promise.all(imagePromises);
+
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi kesalahan saat men-generate konten. Silakan coba lagi.");
+            } finally {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('resultsContainer').classList.remove('hidden');
+                document.getElementById('btnGenerate').disabled = false;
+                document.getElementById('btnGenerate').innerHTML = '<i class="fa-solid fa-bolt text-yellow-200"></i> 7. Generate Konten & Blending';
+            }
+        }
+
+        function toggleLang(index, lang) {
+            const btnID = document.getElementById(`btn-lang-id-${index}`);
+            const btnEN = document.getElementById(`btn-lang-en-${index}`);
+            const textArea = document.getElementById(`prompt-area-${index}`);
+            const theme = currentThemesData[index];
+
+            if(lang === 'ID') {
+                btnID.className = "px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-white shadow-xs text-teal-900 transition";
+                btnEN.className = "px-2.5 py-1 text-[11px] font-extrabold rounded-md text-teal-300 hover:text-white transition";
+                textArea.value = formatJsonString(theme.scenePromptJSON_ID);
+            } else {
+                btnEN.className = "px-2.5 py-1 text-[11px] font-extrabold rounded-md bg-white shadow-xs text-teal-900 transition";
+                btnID.className = "px-2.5 py-1 text-[11px] font-extrabold rounded-md text-teal-300 hover:text-white transition";
+                textArea.value = formatJsonString(theme.scenePromptJSON_EN);
+            }
+        }
+
+        function formatJsonString(str) {
+            try {
+                const obj = JSON.parse(str);
+                return JSON.stringify(obj, null, 2);
+            } catch (e) {
+                return str.replace(/```json\n?|\n?```/g, '').trim();
+            }
+        }
+
+        function copyPrompt(index) {
+            const textArea = document.getElementById(`prompt-area-${index}`);
+            textArea.select();
+            document.execCommand('copy');
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Copied!';
+            setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+        }
+
+        function downloadImage(imgId, filename) {
+            const img = document.getElementById(imgId);
+            if(img.src.includes('placehold.co')) {
+                alert("Gambar belum berhasil digenerate.");
+                return;
+            }
+            const a = document.createElement('a');
+            a.href = img.src;
+            a.download = `AD_Blend_${filename.replace(/\s+/g, '_')}_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        async function regenerateImage(index, ratio, productName) {
+            const theme = currentThemesData[index];
+            const imgElement = document.getElementById(`img-${index}`);
+            const originalSrc = imgElement.src;
+            imgElement.style.opacity = '0.4';
+            
+            try {
+                const productImgData = await getBase64FromFileInput('mainProductFile');
+                const modelImgData = await getBase64FromFileInput('modelFile');
+                const newUrl = await callGeminiImageWithProduct(theme.imagePromptEN, ratio, productImgData, modelImgData, productName);
+                if (newUrl) {
+                    imgElement.src = newUrl;
+                } else {
+                    imgElement.src = originalSrc;
+                }
+            } catch (e) {
+                console.error(e);
+                imgElement.src = originalSrc;
+            } finally {
+                imgElement.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>
